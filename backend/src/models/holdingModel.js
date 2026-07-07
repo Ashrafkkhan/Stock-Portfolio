@@ -99,9 +99,23 @@ const deleteHolding = async (client, holdingId) => {
     await client.query(query, [holdingId]);
 };
 
+// Get all holdings of a user
+const getHoldingsByUser = async (userId) => {
+    const query = `
+        SELECT *
+        FROM holdings
+        WHERE user_id = $1;
+    `;
+
+    const result = await pool.query(query, [userId]);
+
+    return result.rows;
+};
+
 module.exports = {
     findHoldingByUserAndSymbol,
     createHolding,
     updateHolding,
     deleteHolding,
+    getHoldingsByUser,
 };

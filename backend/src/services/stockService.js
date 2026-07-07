@@ -31,11 +31,11 @@ const searchStocks = async (query) => {
 
         return stocks;
     } catch (error) {
-    console.log("Status:", error.response?.status);
-    console.log("Response:", error.response?.data);
+        console.log("Status:", error.response?.status);
+        console.log("Response:", error.response?.data);
 
-    handleApiError(error);
-}
+        handleApiError(error);
+    }
 };
 
 // Get current stock price + company details
@@ -80,12 +80,12 @@ const getStockDetails = async (symbol) => {
         cache.set(cacheKey, stock);
 
         return stock;
-    }catch (error) {
-    console.log("Status:", error.response?.status);
-    console.log("Response:", error.response?.data);
+    } catch (error) {
+        console.log("Status:", error.response?.status);
+        console.log("Response:", error.response?.data);
 
-    handleApiError(error);
-}
+        handleApiError(error);
+    }
 };
 
 // Get historical prices (last 30 days)
@@ -181,13 +181,84 @@ const handleApiError = (error) => {
         throw err;
     }
 
+
     const err = new Error("Stock service unavailable");
     err.status = 503;
     throw err;
+};
+
+// Get quote for symbol
+const getQuote = async (symbol) => {
+    const cacheKey = `quote_${symbol.toUpperCase()}`;
+
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+        return cachedData;
+    }
+
+    try {
+        const response = await stockApi.get("/quote", {
+            params: {
+                symbol: symbol.toUpperCase(),
+            },
+        });
+
+        const quote = {
+            currentPrice: response.data.c,
+            high: response.data.h,
+            low: response.data.l,
+            open: response.data.o,
+            previousClose: response.data.pc,
+        };
+
+        cache.set(cacheKey, quote);
+
+        return quote;
+    } catch (error) {
+        console.log("Status:", error.response?.status);
+        console.log("Response:", error.response?.data);
+
+        handleApiError(error);
+    }
+};
+
+// Get company profile
+const getCompanyProfile = async (symbol) => {
+    const cacheKey = `profile_${symbol.toUpperCase()}`;
+
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+        return cachedData;
+    }
+
+    try {
+        const response = await stockApi.get("/stock/profile2", {
+            params: {
+                symbol: symbol.toUpperCase(),
+            },
+        });
+
+        if (!response.data || Object.keys(response.data).length === 0) {
+            const err = new Error("Stock symbol not found");
+            err.status = 404;
+            throw err;
+        }
+
+        cache.set(cacheKey, response.data);
+
+        return response.data;
+    } catch (error) {
+        console.log("Status:", error.response?.status);
+        console.log("Response:", error.response?.data);
+
+        handleApiError(error);
+    }
 };
 
 module.exports = {
     searchStocks,
     getStockDetails,
     getStockHistory,
+    getQuote,
+    getCompanyProfile,
 };
