@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
@@ -14,13 +14,57 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-brand">
         <Link to="/" className="navbar-logo">
-          🚀 Antigravity Stocks
+          📈 StockPortal
         </Link>
       </div>
+
       <div className="navbar-links">
         {isAuthenticated ? (
           <>
-            <span className="navbar-user">Welcome, {user?.full_name || user?.fullName || user?.name}</span>
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                isActive ? "navbar-link navbar-link-active" : "navbar-link"
+              }
+            >
+              Dashboard
+            </NavLink>
+            <NavLink
+              to="/portfolio"
+              className={({ isActive }) =>
+                isActive ? "navbar-link navbar-link-active" : "navbar-link"
+              }
+            >
+              Portfolio
+            </NavLink>
+            <NavLink
+              to="/trade"
+              className={({ isActive }) =>
+                isActive ? "navbar-link navbar-link-active" : "navbar-link"
+              }
+            >
+              Trade
+            </NavLink>
+            <NavLink
+              to="/transactions"
+              className={({ isActive }) =>
+                isActive ? "navbar-link navbar-link-active" : "navbar-link"
+              }
+            >
+              Transactions
+            </NavLink>
+            <NavLink
+              to="/watchlist"
+              className={({ isActive }) =>
+                isActive ? "navbar-link navbar-link-active" : "navbar-link"
+              }
+            >
+              Watchlist
+            </NavLink>
+            <span className="navbar-divider" />
+            <span className="navbar-user">
+              {user?.full_name || user?.fullName || user?.name}
+            </span>
             <button className="navbar-logout-btn" onClick={handleLogout}>
               Logout
             </button>

@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import tradeService from "../services/tradeService";
 
 function Trade() {
+    const navigate = useNavigate();
     const [symbol, setSymbol] = useState("");
     const [quantity, setQuantity] = useState("");
     const [loading, setLoading] = useState(false);
@@ -23,11 +25,18 @@ function Trade() {
         try {
             const fn = action === "buy" ? tradeService.buyStock : tradeService.sellStock;
             const result = await fn(symbol.trim().toUpperCase(), Number(quantity));
-            setMessage({ type: "success", text: result.message || `${action === "buy" ? "Buy" : "Sell"} order placed successfully!` });
+            setMessage({
+                type: "success",
+                text: result.message || `${action === "buy" ? "Buy" : "Sell"} order placed successfully!`,
+            });
+            // Clear form
             setSymbol("");
             setQuantity("");
         } catch (err) {
-            setMessage({ type: "error", text: err.response?.data?.message || "Trade failed. Please try again." });
+            setMessage({
+                type: "error",
+                text: err.response?.data?.message || "Trade failed. Please try again.",
+            });
         } finally {
             setLoading(false);
         }
@@ -46,6 +55,23 @@ function Trade() {
                     {message && (
                         <div className={message.type === "success" ? "auth-success-alert" : "auth-error-alert"}>
                             {message.text}
+                        </div>
+                    )}
+
+                    {message?.type === "success" && (
+                        <div className="trade-post-actions">
+                            <button
+                                className="btn btn-outline"
+                                onClick={() => navigate("/portfolio")}
+                            >
+                                View Portfolio →
+                            </button>
+                            <button
+                                className="btn btn-outline"
+                                onClick={() => navigate("/dashboard")}
+                            >
+                                Go to Dashboard →
+                            </button>
                         </div>
                     )}
 

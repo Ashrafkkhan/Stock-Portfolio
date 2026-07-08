@@ -53,6 +53,7 @@ function Transactions() {
                             <thead>
                                 <tr>
                                     <th>Symbol</th>
+                                    <th>Company</th>
                                     <th>Type</th>
                                     <th>Qty</th>
                                     <th>Price</th>
@@ -64,6 +65,7 @@ function Transactions() {
                                 {transactions.map((tx) => (
                                     <tr key={tx.id}>
                                         <td><span className="symbol-badge">{tx.symbol}</span></td>
+                                        <td className="text-muted">{tx.companyName || "—"}</td>
                                         <td>
                                             <span className={`type-badge ${tx.type === "BUY" ? "type-buy" : "type-sell"}`}>
                                                 {tx.type}

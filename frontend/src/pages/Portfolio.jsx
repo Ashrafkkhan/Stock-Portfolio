@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import portfolioService from "../services/portfolioService";
 import Loader from "../components/Loader";
 
@@ -60,7 +61,7 @@ function Portfolio() {
                     <div className="stat-card">
                         <div className="stat-label">Total Profit</div>
                         <div className={`stat-value ${summary.totalProfit >= 0 ? "text-green" : "text-red"}`}>
-                            {fmt(summary.totalProfit)}
+                            {summary.totalProfit >= 0 ? "+" : ""}{fmt(summary.totalProfit)}
                         </div>
                     </div>
                     <div className="stat-card">
@@ -79,14 +80,15 @@ function Portfolio() {
                     <span className="section-meta">{holdings.length} stock{holdings.length !== 1 ? "s" : ""}</span>
                 </div>
                 {holdings.length === 0 ? (
-                    <div className="empty-state">No holdings yet. Start trading to build your portfolio.</div>
+                    <div className="empty-state">
+                        No holdings yet. <Link to="/trade">Start trading →</Link>
+                    </div>
                 ) : (
                     <div className="table-wrapper">
                         <table className="data-table">
                             <thead>
                                 <tr>
                                     <th>Symbol</th>
-                                    <th>Company</th>
                                     <th>Qty</th>
                                     <th>Avg Buy Price</th>
                                     <th>Current Price</th>
@@ -98,7 +100,6 @@ function Portfolio() {
                                 {holdings.map((h) => (
                                     <tr key={h.symbol}>
                                         <td><span className="symbol-badge">{h.symbol}</span></td>
-                                        <td className="text-muted">{h.company_name || h.companyName || "—"}</td>
                                         <td>{h.quantity}</td>
                                         <td>{fmt(h.averageBuyPrice)}</td>
                                         <td>{fmt(h.currentPrice)}</td>
